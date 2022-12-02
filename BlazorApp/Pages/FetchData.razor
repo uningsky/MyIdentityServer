@@ -1,0 +1,51 @@
+﻿@page "/fetchdata"
+@using System.Security.Claims;
+@using Microsoft.AspNetCore.Authorization;
+@inject HttpClient Http
+@attribute [Authorize]
+
+<PageTitle>Claims</PageTitle>
+
+<h1>Claims</h1>
+
+<p>This component demonstrates fetching data from the server.</p>
+
+@if (claims == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>type</th>
+                <th>value</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var forecast in claims)
+            {
+                <tr>
+                    <td>@forecast.Type</td>
+                    <td>@forecast.Value</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    private MyClaim[]? claims;
+
+    protected override async Task OnInitializedAsync()
+    {
+        claims = await Http.GetFromJsonAsync<MyClaim[]>("identity");
+    }
+
+    private class MyClaim
+    {
+        public string Type { get; set; }
+        public string Value { get; set; }
+    }
+}
